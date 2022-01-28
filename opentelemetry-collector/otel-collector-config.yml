@@ -1,0 +1,29 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+
+extensions:
+  health_check:
+  pprof:
+  zpages:
+
+exporters:
+  # Exports metrics via gRPC using OpenCensus format
+  opencensus:
+    endpoint: "172.21.207.15:11800" # The OAP Server address
+    insecure: true
+  logging:
+    logLevel: debug
+
+service:
+  extensions: [health_check,pprof,zpages]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, opencensus]
